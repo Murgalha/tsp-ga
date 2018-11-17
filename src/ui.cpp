@@ -10,6 +10,7 @@
 int start = 0;		// Flag para indicar o comeco da execucao do algoritmo
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 800;
+int gen = 1;
 
 void draw_text(char *string, GLint x, GLint y) {  
 	char *c;
@@ -26,6 +27,7 @@ void keyPressEvent(unsigned char key, int x, int y) {
     else if(key =='n') {
         for(int i = 0; i < POP_SIZE; i++)
             population[i] = reproduce(population[i], best);
+        gen++;
     }
     glutPostRedisplay();
 }
@@ -118,13 +120,11 @@ char *generateDistanceHUD() {
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (int i = 0; i < city.size(); i++)
-        drawFilledCircle(city[i].x(), city[i].y(), 10);
-
     if (start) {
         char *dist_buffer;
         init_population();
         set_best();
+        std::cout << "\nGeneration: " << gen << std::endl;
         print_pop();
         drawAll();
 
@@ -132,6 +132,9 @@ void display() {
         glColor3f(1.0f, 1.0f, 1.0f);
         draw_text(dist_buffer, 20, 20);
     }
+    
+    for (int i = 0; i < city.size(); i++)
+        drawFilledCircle(city[i].x(), city[i].y(), 10);
 
     //drawFilledCircle(200, 200, 10);
     //drawLine(100, 100, 200, 200);
@@ -150,4 +153,6 @@ void setup() {
     glutMouseFunc(OnMouseClick);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPressEvent);
+    
+    glDepthFunc(GL_NEVER);
 }
