@@ -23,10 +23,14 @@ void draw_text(char *string, GLint x, GLint y) {
 }
 
 void keyPressEvent(unsigned char key, int x, int y) {
-    if (key == 's')
-        start = 1;
-    if (start) {
-        if(key =='n') {
+    if (key == 's') {
+        if(!start) {
+            init_population();
+            start = 1;
+        }
+    }
+    else if(key =='n') {
+        if(start) {
             for(int i = 0; i < POP_SIZE; i++)
                 population[i] = reproduce(population[i], best);
             gen++;
@@ -110,19 +114,10 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (start) {
-        /* 
-        if (start == 1) {
-            init_population();
-            set_best();
-            start++;
-        } 
-        */
-
-        init_population();
-        set_best();
         char *dist_buffer;
         std::cout << "\nGeneration: " << gen << std::endl;
         print_pop();
+        set_best();
         drawAll();
 
         dist_buffer = generateDistanceHUD();

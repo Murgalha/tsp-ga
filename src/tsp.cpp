@@ -30,11 +30,12 @@ void mutate(std::vector<int> person) {
 }
 
 std::vector<int> reproduce(std::vector<int> personA, std::vector<int> personB) {
-    std::vector<int> personC(city.size());
+    std::vector<int> personC;
     int start = randint(city.size());
     int end = start + 1 + randint(city.size()-start);
     
-    std::copy(personB.begin()+start, personB.begin()+end, personC.begin());
+    for(int j = start; j < end; j++)
+        personC.push_back(personB[j]);
     
     std::vector<int>::iterator it;
     
@@ -48,7 +49,6 @@ std::vector<int> reproduce(std::vector<int> personA, std::vector<int> personB) {
 
     if(randomf <= MUT_CHANCE)
         mutate(personC);
-    
     return personC;
 }
 
