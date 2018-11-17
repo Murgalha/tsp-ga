@@ -76,14 +76,6 @@ void set_best() {
     }
 }
 
-/* void init_cities() { */
-/*     /1* Init N_CITIES on random positions *1/ */
-/*     for(int i = 0; i < N_CITIES; i++) { */
-/*         Point p(randint(20), randint(20)); */
-/*         city.push_back(p); */
-/*     } */
-/* } */
-
 void init_population() {
     /* Init random population */
     for(int i = 0; i < POP_SIZE; i++) {
@@ -114,3 +106,11 @@ void print_pop() {
         std::cout << std::endl;
     }
 }
+
+/* void init_cities() { */
+/*     /1* Init N_CITIES on random positions *1/ */
+/*     for(int i = 0; i < N_CITIES; i++) { */
+/*         Point p(randint(20), randint(20)); */
+/*         city.push_back(p); */
+/*     } */
+/* } */

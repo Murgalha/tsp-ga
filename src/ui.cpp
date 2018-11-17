@@ -7,9 +7,10 @@
 #include "utils.h"
 #include "tsp.h"
 
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 800
+
 int start = 0;		// Flag para indicar o comeco da execucao do algoritmo
-int WINDOW_WIDTH = 800;
-int WINDOW_HEIGHT = 800;
 int gen = 1;
 
 void draw_text(char *string, GLint x, GLint y) {  
@@ -24,21 +25,24 @@ void draw_text(char *string, GLint x, GLint y) {
 void keyPressEvent(unsigned char key, int x, int y) {
     if (key == 's')
         start = 1;
-    else if(key =='n') {
-        for(int i = 0; i < POP_SIZE; i++)
-            population[i] = reproduce(population[i], best);
-        gen++;
+    if (start) {
+        if(key =='n') {
+            for(int i = 0; i < POP_SIZE; i++)
+                population[i] = reproduce(population[i], best);
+            gen++;
+        }
     }
     glutPostRedisplay();
 }
 
 void drawFilledCircle(GLfloat x, GLfloat y, GLfloat radius){
-    int triangleAmount = 20; //# of triangles used to draw circle
+    int triangleAmount = 20;
 
     GLfloat twicePi = 2.0f * M_PI;
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(x, y); // center of circle
+    glVertex2f(x, y);
+
     for (int i = 0; i <= triangleAmount;i++) {
         glVertex2f(x + (radius * cos(i *  twicePi / triangleAmount)), 
                 y + (radius * sin(i * twicePi / triangleAmount)));
@@ -46,7 +50,6 @@ void drawFilledCircle(GLfloat x, GLfloat y, GLfloat radius){
     }
     glEnd();
 }
-
 
 void drawLine(Point p1, Point p2) {
     glBegin(GL_LINES);
@@ -78,6 +81,7 @@ void drawAll() {
     for(int k = 0; k < population.size(); k++) {
         drawPath(population[k]);
     }
+
     glColor3f(1.0f, 0.0f, 0.0f);
     drawPath(best);
 }
@@ -93,6 +97,62 @@ char *vector2buffer(std::vector<int> vector) {
 
     return buffer;
 }
+
+char *generateDistanceHUD() {
+    char *dist_buffer = (char *) calloc (50, sizeof(char));
+
+    sprintf(dist_buffer, "Best Distance: %.3f\n", path_distance(best));
+
+    return dist_buffer;
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    if (start) {
+        /* 
+        if (start == 1) {
+            init_population();
+            set_best();
+            start++;
+        } 
+        */
+
+        init_population();
+        set_best();
+        char *dist_buffer;
+        std::cout << "\nGeneration: " << gen << std::endl;
+        print_pop();
+        drawAll();
+
+        dist_buffer = generateDistanceHUD();
+        glColor3f(1.0f, 1.0f, 1.0f);
+        draw_text(dist_buffer, 20, 20);
+    }
+    
+    for (int i = 0; i < city.size(); i++)
+        drawFilledCircle(city[i].x(), city[i].y(), 10);
+
+    glutSwapBuffers();
+}
+
+void setup() {
+    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
+    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    glutCreateWindow("TSP");
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 0.0f);
+
+    glutMouseFunc(OnMouseClick);
+    glutDisplayFunc(display);
+    glutKeyboardFunc(keyPressEvent);
+    
+    glDepthFunc(GL_NEVER);
+}
+
 /* commented out for posterity */
 /* char *generatePathHUD() { */
 /*     char *path_buffer; */
@@ -108,51 +168,3 @@ char *vector2buffer(std::vector<int> vector) {
 
 /*     return path_buffer; */
 /* } */
-
-char *generateDistanceHUD() {
-    char *dist_buffer = (char *) calloc (50, sizeof(char));
-
-    sprintf(dist_buffer, "Best Distance: %.3f\n", path_distance(best));
-
-    return dist_buffer;
-}
-
-void display() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    if (start) {
-        char *dist_buffer;
-        init_population();
-        set_best();
-        std::cout << "\nGeneration: " << gen << std::endl;
-        print_pop();
-        drawAll();
-
-        dist_buffer = generateDistanceHUD();
-        glColor3f(1.0f, 1.0f, 1.0f);
-        draw_text(dist_buffer, 20, 20);
-    }
-    
-    for (int i = 0; i < city.size(); i++)
-        drawFilledCircle(city[i].x(), city[i].y(), 10);
-
-    //drawFilledCircle(200, 200, 10);
-    //drawLine(100, 100, 200, 200);
-    glutSwapBuffers();
-}
-
-void setup() {
-    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-    glutInitWindowSize(800, 800);
-    glutCreateWindow("TSP");;
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 0.0f);
-
-    glutMouseFunc(OnMouseClick);
-    glutDisplayFunc(display);
-    glutKeyboardFunc(keyPressEvent);
-    
-    glDepthFunc(GL_NEVER);
-}

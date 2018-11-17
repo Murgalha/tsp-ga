@@ -7,8 +7,9 @@ std::vector<Point> city;
 std::vector< std::vector<int> > population;
 std::vector<int> best;
 float best_fitness;
-int POP_SIZE;
 float MUT_CHANCE;
+int POP_SIZE;
+
 
 enum {
     PROGNAME,
@@ -30,7 +31,6 @@ int main(int argc, char *argv[]) {
 
     population = std::vector< std::vector<int> >(POP_SIZE);
 
-    int k = 1;
     srand(time(NULL));
     
     best_fitness = 0;
