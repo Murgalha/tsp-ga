@@ -21,24 +21,24 @@ float euclidean_distance(Point p1, Point p2) {
 }
 
 void mutate(std::vector<int> person) {
-    int idxA = randint(N_CITIES);
-    int idxB = randint(N_CITIES);
+    int idxA = randint(city.size());
+    int idxB = randint(city.size());
 
     while(idxA == idxB)
-        idxB = randint(N_CITIES);
+        idxB = randint(city.size());
     std::swap(person[idxA], person[idxB]);
 }
 
 std::vector<int> reproduce(std::vector<int> personA, std::vector<int> personB) {
-    std::vector<int> personC(N_CITIES);
-    int start = randint(N_CITIES);
-    int end = start + 1 + randint(N_CITIES-start);
+    std::vector<int> personC(city.size());
+    int start = randint(city.size());
+    int end = start + 1 + randint(city.size()-start);
     
     std::copy(personB.begin()+start, personB.begin()+end, personC.begin());
     
     std::vector<int>::iterator it;
     
-    for(int i = 0; i < N_CITIES; i++) {
+    for(int i = 0; i < personA.size(); i++) {
         it = std::find(personC.begin(), personC.end(), personA[i]);
         if(it == personC.end())
             personC.push_back(personA[i]);
@@ -55,9 +55,9 @@ std::vector<int> reproduce(std::vector<int> personA, std::vector<int> personB) {
 
 float path_distance(std::vector<int> person) {
     float sum = 0;
-    for(int i = 0; i < person.size()-1; i++)
-        sum += euclidean_distance(city[person[i]],
-                                  city[person[i+1]]);
+    for(int i = 0; i < person.size(); i++)
+        sum += euclidean_distance(city[person[i%city.size()]],
+                                  city[person[(i+1)%city.size()]]);
     return sum;
 }
 
@@ -76,13 +76,13 @@ void set_best() {
     }
 }
 
-void init_cities() {
-    /* Init N_CITIES on random positions */
-    for(int i = 0; i < N_CITIES; i++) {
-        Point p(randint(20), randint(20));
-        city.push_back(p);
-    }
-}
+/* void init_cities() { */
+/*     /1* Init N_CITIES on random positions *1/ */
+/*     for(int i = 0; i < N_CITIES; i++) { */
+/*         Point p(randint(20), randint(20)); */
+/*         city.push_back(p); */
+/*     } */
+/* } */
 
 void init_population() {
     /* Init random population */
@@ -99,7 +99,7 @@ void print_best() {
     std::cout << "Best: ";
     for(int i = 0; i < best.size(); i++) {
         std::cout << best[i];
-        if(i != N_CITIES-1)
+        if(i != best.size()-1)
             std::cout << ", ";
     }
     std::cout << std::endl;
