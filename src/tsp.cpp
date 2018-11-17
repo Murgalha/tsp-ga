@@ -6,16 +6,7 @@
 #include <random>
 #include <climits>
 #include "point.h"
-
-#define MUT_CHANCE 0.2
-#define N_GEN 100
-#define POP_SIZE 10
-#define N_CITIES 15
-
-std::vector<Point> city;
-std::vector< std::vector<int> > population(POP_SIZE);
-std::vector<int> best;
-float best_fitness;
+#include "utils.h"
 
 int randint(int range) {
     return (rand()%range);
@@ -64,7 +55,7 @@ std::vector<int> reproduce(std::vector<int> personA, std::vector<int> personB) {
 
 float path_distance(std::vector<int> person) {
     float sum = 0;
-    for(int i = 0; i < N_CITIES-1; i++)
+    for(int i = 0; i < person.size()-1; i++)
         sum += euclidean_distance(city[person[i]],
                                   city[person[i+1]]);
     return sum;
@@ -97,7 +88,7 @@ void init_population() {
     /* Init random population */
     for(int i = 0; i < POP_SIZE; i++) {
         population[i].clear();
-        for(int j = 0; j < N_CITIES; j++) {
+        for(int j = 0; j < city.size(); j++) {
             population[i].push_back(j);
         }
         std::random_shuffle(population[i].begin(), population[i].end());
@@ -106,7 +97,7 @@ void init_population() {
 
 void print_best() {
     std::cout << "Best: ";
-    for(int i = 0; i < N_CITIES; i++) {
+    for(int i = 0; i < best.size(); i++) {
         std::cout << best[i];
         if(i != N_CITIES-1)
             std::cout << ", ";
@@ -117,28 +108,9 @@ void print_best() {
 
 void print_pop() {
     for(int i = 0; i < POP_SIZE; i++) {
-        for(int j = 0; j < N_CITIES; j++) {
+        for(int j = 0; j < population[i].size(); j++) {
             std::cout << " " << population[i][j];
         }
         std::cout << std::endl;
-    }
-}
-
-int main(int argc, char *argv[]) {
-    int k = 1;
-    srand(time(NULL));
-
-    init_cities();
-    best_fitness = 0;
-
-    while(k <= N_GEN) {
-        std::cout << "\nGeneration " << k << std::endl;
-        init_population();
-        set_best();
-        
-        for(int i = 0; i < POP_SIZE; i++)
-            population[i] = reproduce(population[i], best);
-        print_best();
-        k++;
     }
 }
