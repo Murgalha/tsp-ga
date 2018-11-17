@@ -1,4 +1,4 @@
 all:
-	@g++ -o tsp src/*.cpp -Iinclude
+	@g++ -o tsp src/*.cpp -Iinclude -lGL -lGLU -lglut
 run:
 	@./tsp
