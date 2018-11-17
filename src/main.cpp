@@ -4,11 +4,32 @@
 #include "ui.h"
 
 std::vector<Point> city;
-std::vector< std::vector<int> > population(POP_SIZE);
+std::vector< std::vector<int> > population;
 std::vector<int> best;
 float best_fitness;
+int POP_SIZE;
+float MUT_CHANCE;
+
+enum {
+    PROGNAME,
+    P_SIZE,
+    M_CHANCE,
+    NARGS
+};
 
 int main(int argc, char *argv[]) {
+    if(argc != NARGS) {
+        std::cout << "Usage: "<<argv[PROGNAME];
+        std::cout << " <POPULATION SIZE> ";
+        std::cout << "<MUTATION_CHANCE>\n";
+        return 1;
+    }
+
+    POP_SIZE = atoi(argv[P_SIZE]);
+    MUT_CHANCE = atof(argv[M_CHANCE]);
+
+    population = std::vector< std::vector<int> >(POP_SIZE);
+
     int k = 1;
     srand(time(NULL));
     
@@ -17,15 +38,4 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     setup();
     glutMainLoop();
-
-    
-    while(k <= N_GEN) {
-        std::cout << "\nGeneration " << k << std::endl;
-        set_best();
-        
-        for(int i = 0; i < POP_SIZE; i++)
-            population[i] = reproduce(population[i], best);
-        print_best();
-        k++;
-    }
 }

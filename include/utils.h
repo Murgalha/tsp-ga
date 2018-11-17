@@ -4,10 +4,8 @@
 #include <vector>
 #include "point.h"
 
-#define MUT_CHANCE 0.2
-#define N_GEN 100
-#define POP_SIZE 10
-#define N_CITIES 15
+extern float MUT_CHANCE;
+extern int POP_SIZE;
 
 extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
