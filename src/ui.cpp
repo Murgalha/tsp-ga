@@ -12,6 +12,7 @@
 
 int start = 0;		// Flag para indicar o comeco da execucao do algoritmo
 int gen = 1;
+bool hide_population = false;
 
 void draw_text(char *string, GLint x, GLint y) {  
 	char *c;
@@ -29,13 +30,17 @@ void keyPressEvent(unsigned char key, int x, int y) {
             start = 1;
         }
     }
-    else if(key =='n') {
+    else if(key == 'n') {
         if(start) {
             for(int i = 0; i < POP_SIZE; i++)
                 population[i] = reproduce(population[i], best);
             gen++;
         }
     }
+    else if(key == 'h') {
+        hide_population = !hide_population;
+    }
+
     glutPostRedisplay();
 }
 
@@ -81,9 +86,11 @@ void drawPath(std::vector<int> pop) {
 }
 
 void drawAll() {
-    glColor3f(0.7f, 0.7f, 0.7f);
-    for(int k = 0; k < population.size(); k++) {
-        drawPath(population[k]);
+    if(!hide_population) {
+        glColor3f(0.7f, 0.7f, 0.7f);
+        for(int k = 0; k < population.size(); k++) {
+            drawPath(population[k]);
+        }
     }
 
     glColor3f(1.0f, 0.0f, 0.0f);
