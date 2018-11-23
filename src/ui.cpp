@@ -14,7 +14,7 @@ int start = 0;		// Flag para indicar o comeco da execucao do algoritmo
 int gen = 1;
 bool hide_population = false;
 
-void draw_text(char *string, GLint x, GLint y) {  
+void drawText(char *string, GLint x, GLint y) {  
 	char *c;
 	glRasterPos2f(x, y);
 
@@ -84,7 +84,7 @@ void OnMouseClick(int button, int state, int x, int y) {
         if (button == GLUT_LEFT_BUTTON && (state == GLUT_DOWN)) { 
             Point p(x, y);
             city.push_back(p);
-            std::cout << "Adding ("<<p.x()<<", "<<p.y()<<")..."<<std::endl;
+            std::cout << "\nAdding ("<<p.x()<<", "<<p.y()<<")..."<<std::endl;
             glutPostRedisplay();
         }
     }
@@ -109,19 +109,26 @@ void drawAll() {
     drawPath(best);
 }
 
-char *vector2buffer(std::vector<int> vector) {
-    char *buffer = (char *) calloc (256, sizeof(char));
+void printGenerationHUD() {
+    char generation[] = "Generation: ";
+    char num[256];
+    char result[256];
+    
+    memset(result, 0, 256);
 
-    for(int i = 0; i < vector.size(); i++) {
-        sprintf(buffer+strlen(buffer), "%d ", vector[i]);
-        if(i != vector.size()-1)
-            sprintf(buffer+strlen(buffer), "- ");
+    strcat(result, generation);
+
+    if(start) {
+        sprintf(num, "%d", gen);
+        strcat(result, num);
     }
 
-    return buffer;
+    glColor3f(1.0f, 1.0f, 1.0f);
+    drawText(result, 20, WINDOW_HEIGHT-20);
 }
 
 void printCommandHUD() {
+    char click[] = "Click - Set city";
     char hide[] = "H - Show/Hide population";
     char start[] = "S - Start simulation";
     char next[] = "N - Next generation";
@@ -129,39 +136,68 @@ void printCommandHUD() {
     char quit[] = "Q - Quit simulation";
     
     glColor3f(1.0f, 1.0f, 1.0f);
-    draw_text(start, WINDOW_WIDTH - 200, 20);
-    draw_text(next, WINDOW_WIDTH - 200, 40);
-    draw_text(hide, WINDOW_WIDTH - 200, 60);
-    draw_text(reset, WINDOW_WIDTH - 200, 80);
-    draw_text(quit, WINDOW_WIDTH - 200, 100);
+    drawText(click, WINDOW_WIDTH - 400, 20);
+    drawText(start, WINDOW_WIDTH - 400, 40);
+    drawText(next, WINDOW_WIDTH - 400, 60);
+    drawText(hide, WINDOW_WIDTH - 200, 20);
+    drawText(reset, WINDOW_WIDTH - 200, 40);
+    drawText(quit, WINDOW_WIDTH - 200, 60);
 }
 
-char *generateDistanceHUD() {
-    char *dist_buffer = (char *) calloc (50, sizeof(char));
+void printDistanceHUD() {
+    char dist[] = "Best Distance: ";
+    char num[256];
+    char result[256];
 
-    sprintf(dist_buffer, "Best Distance: %.3f\n", path_distance(best));
+    memset(result, 0, 256);
 
-    return dist_buffer;
+    strcat(result, dist);
+    
+    if(start) {
+        sprintf(num, "%.3f", path_distance(best));
+        strcat(result, num);
+    }
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    drawText(result, 20, 20);
+}
+
+void printCitiesHUD() {
+    char cities[] = "Cities: ";
+    char num[256];
+    char result[256];
+
+    memset(result, 0, 256);
+
+    sprintf(num, "%lu", city.size());
+
+    strcat(result, cities);
+    strcat(result, num);
+    
+    glColor3f(1.0f, 1.0f, 1.0f);
+    drawText(result, 20, 40);
 }
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    printCommandHUD();
-    
+
+    if(city.size() > 0)
+        printCitiesHUD();
+
     if (start) {
         char *dist_buffer;
         std::cout << "\nGeneration: " << gen << std::endl;
         print_pop();
         set_best();
         drawAll();
-
-        dist_buffer = generateDistanceHUD();
-        glColor3f(1.0f, 1.0f, 1.0f);
-        draw_text(dist_buffer, 20, 20);
     }
     
     for (int i = 0; i < city.size(); i++)
         drawFilledCircle(city[i].x(), city[i].y(), 10);
+    
+    printDistanceHUD();
+    printCommandHUD();
+    printGenerationHUD();
 
     glutSwapBuffers();
 }
@@ -182,19 +218,3 @@ void setup() {
     
     glDepthFunc(GL_NEVER);
 }
-
-/* commented out for posterity */
-/* char *generatePathHUD() { */
-/*     char *path_buffer; */
-/*     char *vec = vector2buffer(best); */
-
-/*     path_buffer = (char *) calloc (12, sizeof(char)); // Size of 'Best Path: ' */
-/*     strcpy(path_buffer, "Best Path: "); */
-    
-/*     path_buffer = (char *) realloc (path_buffer, sizeof(char)*(12+strlen(vec))); // Size of 'Best Path: ' */
-/*     strcat(path_buffer, vec); */
-
-/*     free(vec); */
-
-/*     return path_buffer; */
-/* } */
