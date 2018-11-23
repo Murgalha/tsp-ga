@@ -40,6 +40,18 @@ void keyPressEvent(unsigned char key, int x, int y) {
     else if(key == 'h') {
         hide_population = !hide_population;
     }
+    else if(key == 'r') {
+        gen = 1;
+        start = 0;
+        city.clear();
+        for(int i = 0; i < POP_SIZE; i++)
+            population[i].clear();
+        best.clear();
+        best_fitness = 0;
+    }
+    else if(key == 'q') {
+        exit(0);
+    }
 
     glutPostRedisplay();
 }
@@ -109,6 +121,21 @@ char *vector2buffer(std::vector<int> vector) {
     return buffer;
 }
 
+void printCommandHUD() {
+    char hide[] = "H - Show/Hide population";
+    char start[] = "S - Start simulation";
+    char next[] = "N - Next generation";
+    char reset[] = "R - Reset simulation";
+    char quit[] = "Q - Quit simulation";
+    
+    glColor3f(1.0f, 1.0f, 1.0f);
+    draw_text(start, WINDOW_WIDTH - 200, 20);
+    draw_text(next, WINDOW_WIDTH - 200, 40);
+    draw_text(hide, WINDOW_WIDTH - 200, 60);
+    draw_text(reset, WINDOW_WIDTH - 200, 80);
+    draw_text(quit, WINDOW_WIDTH - 200, 100);
+}
+
 char *generateDistanceHUD() {
     char *dist_buffer = (char *) calloc (50, sizeof(char));
 
@@ -119,7 +146,8 @@ char *generateDistanceHUD() {
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    printCommandHUD();
+    
     if (start) {
         char *dist_buffer;
         std::cout << "\nGeneration: " << gen << std::endl;
