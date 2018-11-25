@@ -9,7 +9,8 @@ std::vector<int> best;
 float best_fitness;
 float MUT_CHANCE;
 int POP_SIZE;
-
+int WINDOW_HEIGHT = 800;
+int WINDOW_WIDTH = 800;
 
 enum {
     PROGNAME,

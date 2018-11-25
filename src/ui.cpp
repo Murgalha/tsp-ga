@@ -7,9 +7,6 @@
 #include "utils.h"
 #include "tsp.h"
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 800
-
 int start = 0;		// Flag para indicar o comeco da execucao do algoritmo
 int gen = 1;
 bool hide_population = false;
@@ -136,12 +133,12 @@ void printCommandHUD() {
     char quit[] = "Q - Quit simulation";
     
     glColor3f(1.0f, 1.0f, 1.0f);
-    drawText(click, WINDOW_WIDTH - 400, 20);
-    drawText(start, WINDOW_WIDTH - 400, 40);
-    drawText(next, WINDOW_WIDTH - 400, 60);
-    drawText(hide, WINDOW_WIDTH - 200, 20);
-    drawText(reset, WINDOW_WIDTH - 200, 40);
-    drawText(quit, WINDOW_WIDTH - 200, 60);
+    drawText(click, WINDOW_WIDTH - 450, 20);
+    drawText(start, WINDOW_WIDTH - 450, 40);
+    drawText(next, WINDOW_WIDTH - 450, 60);
+    drawText(hide, WINDOW_WIDTH - 250, 20);
+    drawText(reset, WINDOW_WIDTH - 250, 40);
+    drawText(quit, WINDOW_WIDTH - 250, 60);
 }
 
 void printDistanceHUD() {
@@ -202,6 +199,19 @@ void display() {
     glutSwapBuffers();
 }
 
+void reshapeCallback(int width, int height) {
+    glViewport(0,0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, width, height, 0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    WINDOW_HEIGHT = height;
+    WINDOW_WIDTH = width;
+    glutPostRedisplay();
+}
+
 void setup() {
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -212,6 +222,7 @@ void setup() {
     glLoadIdentity();
     gluOrtho2D(0.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 0.0f);
 
+    glutReshapeFunc(reshapeCallback);
     glutMouseFunc(OnMouseClick);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPressEvent);
