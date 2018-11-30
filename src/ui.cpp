@@ -7,9 +7,14 @@
 #include "utils.h"
 #include "tsp.h"
 
+typedef struct {
+    GLfloat r, g, b;
+} color_t;
+
 int start = 0;		// Flag para indicar o comeco da execucao do algoritmo
 int gen = 1;
 bool hide_population = false;
+color_t bg_color, fg_color, best_color, pop_color;
 
 void drawText(char *string, GLint x, GLint y) {  
 	char *c;
@@ -18,6 +23,31 @@ void drawText(char *string, GLint x, GLint y) {
 	for (c = string; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
 	}
+}
+
+void set_light_theme() {    
+    /* set background to black and foreground to white */
+    bg_color.r = bg_color.g = bg_color.b = 1.0f;
+    fg_color.r = fg_color.g = fg_color.b = 0.0f;
+
+    /* setting best path to red */
+    best_color.r = 1.0f;
+    best_color.g = best_color.b = 0.0f;
+
+    pop_color.r = pop_color.g = pop_color.b = 0.85f;
+}
+
+void set_dark_theme() {
+    /* set background to black and foreground to white */
+    bg_color.r = bg_color.g = bg_color.b = 0.0f;
+    fg_color.r = fg_color.g = fg_color.b = 1.0f;
+
+    /* setting best path to green */
+    best_color.r = 0.0f;
+    best_color.g = 1.0f;
+    best_color.b = 0.0;
+
+    pop_color.r = pop_color.g = pop_color.b = 0.7f;    
 }
 
 void keyPressEvent(unsigned char key, int x, int y) {
@@ -49,6 +79,12 @@ void keyPressEvent(unsigned char key, int x, int y) {
     else if(key == 'q') {
         exit(0);
     }
+    else if(key == '1') {
+        set_dark_theme();
+    }
+    else if(key == '2') {
+        set_light_theme();
+    }
 
     glutPostRedisplay();
 }
@@ -57,7 +93,7 @@ void drawFilledCircle(GLfloat x, GLfloat y, GLfloat radius){
     int triangleAmount = 20;
 
     GLfloat twicePi = 2.0f * M_PI;
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(fg_color.r, fg_color.g, fg_color.b);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(x, y);
 
@@ -96,13 +132,13 @@ void drawPath(std::vector<int> pop) {
 
 void drawAll() {
     if(!hide_population) {
-        glColor3f(0.7f, 0.7f, 0.7f);
+        glColor3f(pop_color.r, pop_color.g, pop_color.b);
         for(int k = 0; k < population.size(); k++) {
             drawPath(population[k]);
         }
     }
 
-    glColor3f(1.0f, 0.0f, 0.0f);
+    glColor3f(best_color.r, best_color.g, best_color.b);
     drawPath(best);
 }
 
@@ -120,7 +156,7 @@ void printGenerationHUD() {
         strcat(result, num);
     }
 
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(fg_color.r, fg_color.g, fg_color.b);
     drawText(result, 20, WINDOW_HEIGHT-20);
 }
 
@@ -132,7 +168,7 @@ void printCommandHUD() {
     char reset[] = "R - Reset simulation";
     char quit[] = "Q - Quit simulation";
     
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(fg_color.r, fg_color.g, fg_color.b);
     drawText(click, WINDOW_WIDTH - 450, 20);
     drawText(start, WINDOW_WIDTH - 450, 40);
     drawText(next, WINDOW_WIDTH - 450, 60);
@@ -155,7 +191,7 @@ void printDistanceHUD() {
         strcat(result, num);
     }
 
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(fg_color.r, fg_color.g, fg_color.b);
     drawText(result, 20, 20);
 }
 
@@ -171,11 +207,12 @@ void printCitiesHUD() {
     strcat(result, cities);
     strcat(result, num);
     
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(fg_color.r, fg_color.g, fg_color.b);
     drawText(result, 20, 40);
 }
 
 void display() {
+    glClearColor(bg_color.r, bg_color.g, bg_color.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(city.size() > 0)
@@ -191,7 +228,7 @@ void display() {
     
     for (int i = 0; i < city.size(); i++)
         drawFilledCircle(city[i].x(), city[i].y(), 10);
-    
+
     printDistanceHUD();
     printCommandHUD();
     printGenerationHUD();
@@ -213,11 +250,13 @@ void reshapeCallback(int width, int height) {
 }
 
 void setup() {
+    set_dark_theme();
+    
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutCreateWindow("TSP");
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(bg_color.r, bg_color.g, bg_color.b, 1.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(0.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 0.0f);
