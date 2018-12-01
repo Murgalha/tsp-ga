@@ -1,10 +1,14 @@
 #include <string> 
 #include <iostream>
+#include <istream>
 #include "ui.h"
 #include "draw.h"
 #include "point.h"
 #include "utils.h"
 #include "tsp.h"
+
+/* automatic pass of generation flag */
+bool automatic = false;
 
 /* start flag, initially set to false */
 bool start = false;
@@ -85,6 +89,7 @@ void keyPressEvent(unsigned char key, int x, int y) {
         /* reset every variable needed */
         generation_counter = 1;
         start = false;
+        automatic = false;
         city.clear();
         for(int i = 0; i < POP_SIZE; i++)
             population[i].clear();
@@ -103,6 +108,9 @@ void keyPressEvent(unsigned char key, int x, int y) {
     /* 2 - Draw with light theme */
     else if(key == '2')
         set_light_theme();
+    else if(key == ' ') {
+        automatic = !automatic;
+    }
 
     glutPostRedisplay();
 }
@@ -129,7 +137,7 @@ void display() {
     /* draw number of citites if vector not empty */
     if(city.size() > 0)
         drawCitiesHUD();
-
+    
     /* draw info if simulation started */
     if (start) {
         std::cout << "\nGeneration: " << generation_counter << std::endl;
@@ -154,6 +162,11 @@ void display() {
     drawGenerationHUD();
 
     glutSwapBuffers();
+
+    /* if on automatic mode, forces a
+       keypress event */
+    if(automatic)
+        keyPressEvent('n', 0, 0);
 }
 
 /* window reshape callback */
