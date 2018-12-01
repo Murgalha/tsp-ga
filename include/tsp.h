@@ -12,8 +12,8 @@ std::vector<int> reproduce(std::vector<int>, std::vector<int>);
 float path_distance(std::vector<int>);
 float fitness(std::vector<int>);
 void set_best();
-void init_cities();
 void init_population();
+void write_best();
 void print_best();
 void print_pop();
 
