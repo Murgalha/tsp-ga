@@ -6,6 +6,11 @@
 #include "utils.h"
 #include "tsp.h"
 
+enum {
+	DARK,
+	LIGHT
+};
+
 /* start flag, initially set to false */
 bool start = false;
 
@@ -14,6 +19,8 @@ int generation_counter = 1;
 
 /* hide population draw flag, initially set to false */
 bool hide_population = false;
+
+int theme = DARK;
 
 /* color variables for the theme */
 color_t bg_color, fg_color, best_color, pop_color;
@@ -53,6 +60,17 @@ void set_dark_theme() {
 
     /* set population color to darkish gray */
     pop_color.r = pop_color.g = pop_color.b = 0.695f;    
+}
+
+void toggle_theme() {
+    if(theme == DARK) {
+        theme = LIGHT;
+        set_light_theme();
+    }
+    else {
+        theme = DARK;
+        set_dark_theme();
+    }
 }
 
 void keyPressEvent(unsigned char key, int x, int y) {
@@ -96,13 +114,9 @@ void keyPressEvent(unsigned char key, int x, int y) {
     else if(key == 'q')
         exit(0);
 
-    /* 1 - Draw with dark theme */
-    else if(key == '1')
-        set_dark_theme();
-
-    /* 2 - Draw with light theme */
-    else if(key == '2')
-        set_light_theme();
+    /* T - Toggle theme */
+    else if(key == 't')
+        toggle_theme();
 
     glutPostRedisplay();
 }

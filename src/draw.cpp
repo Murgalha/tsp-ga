@@ -97,6 +97,7 @@ void drawCommandHUD() {
     char next[] = "N - Next generation";
     char reset[] = "R - Reset simulation";
     char quit[] = "Q - Quit simulation";
+    char theme[] = "T - Dark/Light theme";
 
     /* draw command list on top right of the screen */
     glColor3f(fg_color.r, fg_color.g, fg_color.b);
@@ -106,6 +107,7 @@ void drawCommandHUD() {
     drawText(hide, WINDOW_WIDTH - 250, 20);
     drawText(reset, WINDOW_WIDTH - 250, 40);
     drawText(quit, WINDOW_WIDTH - 250, 60);
+    drawText(theme, WINDOW_WIDTH - 450, 80);	
 }
 
 /* draw best distance on screen */
